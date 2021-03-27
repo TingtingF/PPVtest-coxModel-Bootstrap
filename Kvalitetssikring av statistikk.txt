@@ -1,0 +1,147 @@
+library(readr)
+
+install.packages("tidyverse")
+library(tidyverse)
+
+df <- read_delim("hurtigtester.csv", 
+                           ";", escape_double = FALSE, trim_ws = TRUE)
+View(df)
+
+str(df)
+summary(df)
+
+df <- df %>% 
+  select (Innsendt,Kommune,Lager) %>% 
+  drop_na(Lager)  %>% 
+  rename (dato = Innsendt) 
+
+df$dato <- as.Date(df$dato)
+head(df)
+
+
+df1 <- df  %>%    
+  arrange(Kommune, desc(dato))   %>% 
+  select(Kommune, dato, Lager) %>% 
+  group_by(Kommune)  %>%
+  slice(1)# Beholder den første raden i Kommune
+
+
+view(df1)
+head(df1)
+
+sum(df1$Lager)
+
+
+install.packages("writexl")
+library("writexl")
+
+write_xlsx(df1,"dftest.xlsx")
+
+##############  Datakilde fra Power BI ##################### 
+
+install.packages("readxl")
+library("readxl")
+df3 <- read_excel("HurtigtesterPBI.xlsx")
+View(df3)
+
+str(df3)
+summary(df3)
+
+df3 <- df3 %>% 
+  select (dato=DatoTidInnsendtTilAltinn,Kommune, Lager=AntallAntigenPaaLager) %>% 
+  drop_na(Lager)  
+
+df3$dato <- as.Date(dfe$dato)
+head(df3)
+
+
+df4 <- df3  %>%  group_by(Kommune)  %>%  
+  arrange(Kommune, desc(dato))   %>% 
+  select(Kommune, dato, Lager) %>% 
+  group_by(Kommune) %>% 
+  slice(1)# Beholder den første raden i Kommune
+
+
+view(df4)
+head(df4)
+
+
+sum(df1$Lager)
+
+sum(df4$Lager)
+
+
+
+##############  Datakilde fra Power BI SISTE INNMELDTE ##################### 
+
+install.packages("readxl")
+library("readxl")
+df5 <- read_excel("testing hurtigtester/hurtigtesterPBI2.xlsx")
+View(df5)
+
+str(df5)
+summary(df5)
+
+df5 <- df5 %>% 
+  filter (ErSiste == 1, LagerSist > 0 )   
+
+
+head(df5)
+
+
+
+df6 <- df5  %>%  group_by(Kommune)  %>%  
+  arrange(Kommune, desc(dato))   %>% 
+  select(Kommune, dato, Lager) %>% 
+  group_by(Kommune) %>% 
+  slice(1)# Beholder den første raden i Kommune
+
+
+view(df4)
+head(df4)
+
+
+sum(df1$Lager)
+
+sum(df4$Lager)
+
+sum(df5$LagerSist)
+
+##############  Datakilde fra Power BI Original lagerstatus og erSISTE  ##################### 
+
+install.packages("readxl")
+library("readxl")
+df7 <- read_excel("testing hurtigtester/hurtigtesterPBI3.xlsx")
+View(df7)
+
+str(df7)
+summary(df7)
+
+
+ df7 <- df7 %>% 
+  filter (ErSiste == 1)   
+
+
+
+df7 <- df7  %>%  group_by(Kommunenr)  %>%  
+  arrange(Kommunenr, desc(Dato))   %>% 
+   group_by(Kommunenr) %>% 
+  slice(1)# Beholder den første raden i Kommune
+
+head(df7)
+str(df7)
+summary(df7)
+
+df8 <- df7  %>%  filter(ErSiste==0) 
+sum(df8$Lager)
+
+
+sum(df1$Lager)
+
+sum(df4$Lager)
+
+sum(df5$LagerSist)
+
+sum(df7$Lager)
+
+view(df8)
